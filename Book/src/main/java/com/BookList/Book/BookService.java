@@ -1,48 +1,34 @@
 package com.BookList.Book;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import org.springframework.web.bind.annotation.PathVariable;
+@Service
+public class BookService {
 
-public class BookService implements BookRepo {
-    private HashMap<Integer, Book> bookMap = new HashMap<>();
+    @Autowired
+    private BookRepo bookRepo;
 
-    public BookService(){
-        Book b1=new Book(1,"Book1","book1.jpg");
-        Book b2=new Book(2,"Book2","book2.jpg");
-        bookMap.put(1, b1);
-        bookMap.put(2, b2);
+    public List<Book> getAllBooks() {
+        return bookRepo.findAll();
     }
 
-    @Override
-    public ArrayList<Book> getAllBooks() {
-        Collection<Book> values = bookMap.values();
-        ArrayList<Book> bookList = new ArrayList<>(values);
-        return bookList;
+    public Book getBookById(int id) {
+        return bookRepo.findById(id).orElse(null);
     }
-    @Override
-    public Book getBookById(@PathVariable("id") int id) {
-        return bookMap.get(id);
-        
+
+    public Book addBook(Book book) {
+        return bookRepo.save(book);
     }
-    
-@Override
-public Book addBook(Book book) {
-    bookMap.put(book.getId(), book);
-    return book;
-}
 
-public Book updateBook(int id, Book book) {
-    bookMap.put(id, book);
-    return book;
-}
-public void deleteBook(int id) {
-    bookMap.remove(id);
-}
+    public Book updateBook(int id, Book book) {
+        book.setId(id);
+        return bookRepo.save(book);
+    }
 
-
-
+    public void deleteBook(int id) {
+        bookRepo.deleteById(id);
+    }
 }
